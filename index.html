@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Matrix Effect</title>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: black;
+        }
+
+        canvas {
+            display: block;
+        }
+    </style>
+</head>
+
+<body>
+    <canvas id="matrixCanvas"></canvas>
+
+    <script>
+        const canvas = document.getElementById('matrixCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // Full screen canvas
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        // Characters and target texts
+        const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()_+~`|}{[]:;?><,./-=";
+        const targetText1 = "Oglądamy coś dzisiaj? 😃 ❤️";
+        const targetText2 = "Czy jesteś zajęta? 😢"; // Added sad face emoji
+        const fontSize = 20;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+        const targetText1X = (columns - targetText1.length) / 2;
+        const targetText1Y = Math.floor(canvas.height / fontSize / 2);
+        const targetText2X = (columns - targetText2.length) / 2;
+        const targetText2Y = targetText1Y + 3; // Adjust vertical position to be below the first text
+
+        let showTargetTexts = false;
+
+        // Draw function
+        function draw() {
+            // Darken the canvas slightly on each frame
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.fillStyle = "#0F0";
+            ctx.font = `${fontSize}px monospace`;
+
+            // Loop over columns to create the falling letters effect
+            for (let i = 0; i < drops.length; i++) {
+                const x = i * fontSize;
+                const y = drops[i] * fontSize;
+
+                // Draw random letter
+                const text = letters.charAt(Math.floor(Math.random() * letters.length));
+                ctx.fillText(text, x, y);
+
+                // Reset drop when it reaches the bottom
+                if (y > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+
+                // Move drop
+                drops[i]++;
+            }
+
+            // Draw the target texts in the center after a delay
+            if (showTargetTexts) {
+                ctx.fillStyle = "#0F0"; // Keep the color the same
+                // Draw first text
+                const text1X = (canvas.width - ctx.measureText(targetText1).width) / 2;
+                const text1Y = canvas.height / 2 - fontSize / 2;
+                ctx.fillText(targetText1, text1X, text1Y);
+
+                // Draw second text
+                const text2X = (canvas.width - ctx.measureText(targetText2).width) / 2;
+                const text2Y = text1Y + fontSize * 2; // Adjust vertical position to be below the first text
+                ctx.fillText(targetText2, text2X, text2Y);
+            }
+        }
+
+        // Loop the animation
+        setInterval(draw, 50);
+
+        // Show the target texts after a 3-second delay
+        setTimeout(() => {
+            showTargetTexts = true;
+        }, 3000);
+    </script>
+</body>
+
+</html>
