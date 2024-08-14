@@ -31,8 +31,9 @@
 
         // Characters and target texts
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()_+~`|}{[]:;?><,./-=";
-        const targetText1 = "Oglądamy coś dzisiaj? Odpoczniesz trochę 😃 ❤️";
-        const targetText2 = "Czy jesteś zajęta? 😢"; // Added sad face emoji
+        const targetText1 = "Oglądamy coś dzisiaj?";
+        const targetText2 = "Odpoczniesz trochę 😃 ❤️";
+        const targetText3 = "Czy jesteś zajęta? 😢";
         const fontSize = 20;
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
@@ -82,6 +83,11 @@
                 const text2X = (canvas.width - ctx.measureText(targetText2).width) / 2;
                 const text2Y = text1Y + fontSize * 2; // Adjust vertical position to be below the first text
                 ctx.fillText(targetText2, text2X, text2Y);
+
+                // Draw third text
+                const text3X = (canvas.width - ctx.measureText(targetText3).width) / 2;
+                const text3Y = text2Y + fontSize * 2; // Adjust vertical position to be below the second text
+                ctx.fillText(targetText3, text3X, text3Y);
             }
         }
 
