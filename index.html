@@ -31,18 +31,32 @@
 
         // Characters and target texts
         const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789@#$%^&*()_+~`|}{[]:;?><,./-=";
-        const targetText1 = "Oglądamy coś dzisiaj?";
-        const targetText2 = "Odpoczniesz trochę 😃 ❤️";
-        const targetText3 = "Czy jesteś zajęta? 😢";
-        const fontSize = 20;
+        const targetTexts = [
+            "Oglądamy coś dzisiaj?",
+            "Odpoczniesz trochę 😃 ❤️",
+            "Czy jesteś zajęta? 😢"
+        ];
+        let fontSize = 20; // Initial font size
         const columns = canvas.width / fontSize;
         const drops = Array(Math.floor(columns)).fill(1);
-        const targetText1X = (columns - targetText1.length) / 2;
-        const targetText1Y = Math.floor(canvas.height / fontSize / 2);
-        const targetText2X = (columns - targetText2.length) / 2;
-        const targetText2Y = targetText1Y + 3; // Adjust vertical position to be below the first text
 
         let showTargetTexts = false;
+
+        // Function to dynamically adjust the font size
+        function adjustFontSize() {
+            const maxWidth = canvas.width * 0.9; // Allow some padding on the sides
+            let fits = false;
+
+            // Gradually decrease the font size until all texts fit
+            while (!fits && fontSize > 10) { // Set a minimum font size to prevent being too small
+                ctx.font = `${fontSize}px monospace`;
+                fits = targetTexts.every(text => ctx.measureText(text).width <= maxWidth);
+
+                if (!fits) fontSize -= 1;
+            }
+        }
+
+        adjustFontSize(); // Call the function to adjust font size initially
 
         // Draw function
         function draw() {
@@ -74,20 +88,12 @@
             // Draw the target texts in the center after a delay
             if (showTargetTexts) {
                 ctx.fillStyle = "#0F0"; // Keep the color the same
-                // Draw first text
-                const text1X = (canvas.width - ctx.measureText(targetText1).width) / 2;
-                const text1Y = canvas.height / 2 - fontSize / 2;
-                ctx.fillText(targetText1, text1X, text1Y);
 
-                // Draw second text
-                const text2X = (canvas.width - ctx.measureText(targetText2).width) / 2;
-                const text2Y = text1Y + fontSize * 2; // Adjust vertical position to be below the first text
-                ctx.fillText(targetText2, text2X, text2Y);
-
-                // Draw third text
-                const text3X = (canvas.width - ctx.measureText(targetText3).width) / 2;
-                const text3Y = text2Y + fontSize * 2; // Adjust vertical position to be below the second text
-                ctx.fillText(targetText3, text3X, text3Y);
+                targetTexts.forEach((text, index) => {
+                    const textX = (canvas.width - ctx.measureText(text).width) / 2;
+                    const textY = canvas.height / 2 + index * fontSize * 2 - (fontSize * targetTexts.length);
+                    ctx.fillText(text, textX, textY);
+                });
             }
         }
 
@@ -98,6 +104,13 @@
         setTimeout(() => {
             showTargetTexts = true;
         }, 3000);
+
+        // Adjust font size on window resize
+        window.addEventListener('resize', () => {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+            adjustFontSize();
+        });
     </script>
 </body>
 
